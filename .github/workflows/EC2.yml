@@ -2,4 +2,28 @@ name: Entrega continua
 
 on:
   workflow_call: 
+  
 jobs:
+  EC2:
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - uses: actions/checkout@v3
+    
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v2.1.1
+      with:
+        # Artifact name
+        name: programa
+    
+    - name: Deploy to Staging server
+      uses: easingthemes/ssh-deploy@main
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        TARGET: /home/${{ secrets.REMOTE_USER }}
+        EXCLUDE: "postgres-data"
+    
+    
